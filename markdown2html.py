@@ -39,7 +39,7 @@ def from_markdown_to_html():
             for markdown_line in markdown_lines:
                 result = result + (transform_hashtag(markdown_line))
         with open('README.html', 'w') as html_file:
-            html_file.write(result + '\n')
+            html_file.write(result)
 
     except IOError:
         exit('Missing {}'.format(arguments[1]))
