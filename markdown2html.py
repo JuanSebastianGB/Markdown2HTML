@@ -3,6 +3,26 @@
 """
 
 
+def count_hashtags(line_to_check):
+    """Counting # quantity"""
+    line_splited = line_to_check.split('# ')
+    if line_splited.__len__() == 1:
+        return 0
+    return line_to_check.count('#')
+
+
+def transform_hashtag(line_to_check):
+    """Transforms the line with # into a line with html tags"""
+    hashtags = ['# ', '## ', '### ', '#### ', '##### ', '###### ']
+    for hashtag in hashtags:
+        if line_to_check.startswith(hashtag):
+            hashtags_quantity = count_hashtags(line_to_check)
+            return '<h{:n}>{}</h{:n}>\n'.\
+                format(hashtags_quantity,
+                       line_to_check[hashtags_quantity: -1], hashtags_quantity)
+    return ''
+
+
 def from_markdown_to_html():
     """_Processing terminal inputs to get an html output_
     """
@@ -13,8 +33,15 @@ def from_markdown_to_html():
     if argumentsNumber < 3:
         exit('Usage: ./markdown2html.py README.md README.html')
     try:
+        result = ''
         with open(arguments[1]) as file:
-            pass
+            lines = file.readlines()
+            for line in lines:
+                print(line)
+                result = result + (transform_hashtag(line))
+            with open('README.html', 'w') as output_file:
+                output_file.write(result + '\n')
+
     except IOError:
         exit('Missing {}'.format(arguments[1]))
 
