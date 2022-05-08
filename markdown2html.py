@@ -19,7 +19,7 @@ def transform_hashtag(line_to_check):
             hashtags_quantity = count_hashtags(line_to_check)
             return '<h{:n}>{}</h{:n}>\n'.\
                 format(hashtags_quantity,
-                       line_to_check[hashtags_quantity: -1], hashtags_quantity)
+                       line_to_check[hashtags_quantity+1: -1], hashtags_quantity)
     return ''
 
 
