@@ -3,7 +3,7 @@
 """
 
 
-def process_markdown_line(line_to_check, document_lines):
+def process_markdown_line(line_to_check, document_lines, ul_count, last_line):
     """Transforms the line with # into a line with html tags
     and append to a list by reference"""
 
@@ -13,6 +13,15 @@ def process_markdown_line(line_to_check, document_lines):
     if left_word_part[0] == '#':
         document_lines.append(
             '<h{0}>{1}</h{0}>\n'.format(left_word_part.__len__(), right_word_part))
+
+    if left_word_part[0] == '-':
+        ul_count += 1
+        if ul_count == 1:
+            document_lines.append('<ul>\n')
+        document_lines.append(f'<li>{right_word_part}</li>\n')
+        if ul_count > 0:
+            if left_word_part[0] != '-' or line_to_check == last_line:
+                document_lines.append('</ul>\n')
 
 
 def from_markdown_to_html():
@@ -25,11 +34,13 @@ def from_markdown_to_html():
     if argumentsNumber < 3:
         exit('Usage: ./markdown2html.py README.md README.html')
     try:
-        document_lines = []
+        document_lines, ul_count = [], 0
+
         with open(arguments[1], 'r') as markdown_file:
             markdown_lines = markdown_file.readlines()
             for markdown_line in markdown_lines:
-                process_markdown_line(markdown_line, document_lines)
+                process_markdown_line(
+                    markdown_line, document_lines, ul_count, markdown_lines[-1])
         with open(arguments[2], 'w') as html_file:
             html_file.writelines(document_lines)
 
