@@ -3,24 +3,16 @@
 """
 
 
-def count_hashtags(line_to_check):
-    """Counting # quantity"""
-    line_splited = line_to_check.split('# ')
-    if line_splited.__len__() == 1:
-        return 0
-    return line_to_check.count('#')
+def process_markdown_line(line_to_check, document_lines):
+    """Transforms the line with # into a line with html tags
+    and append to a list by reference"""
 
-
-def transform_hashtag(line_to_check):
-    """Transforms the line with # into a line with html tags"""
-    hashtags = ['# ', '## ', '### ', '#### ', '##### ', '###### ']
-    for hashtag in hashtags:
-        if line_to_check.startswith(hashtag):
-            hashtags_quantity = count_hashtags(line_to_check)
-            return '<h{:n}>{}</h{:n}>\n'.\
-                format(hashtags_quantity,
-                       line_to_check[hashtags_quantity+1: -1], hashtags_quantity)
-    return ''
+    line_splited = line_to_check.split(' ')
+    left_word_part = line_splited[0]
+    right_word_part = ' '.join(line_splited[1:]).replace('\n', '')
+    if left_word_part[0] == '#':
+        document_lines.append(
+            '<h{0}>{1}</h{0}>\n'.format(left_word_part.__len__(), right_word_part))
 
 
 def from_markdown_to_html():
@@ -33,13 +25,13 @@ def from_markdown_to_html():
     if argumentsNumber < 3:
         exit('Usage: ./markdown2html.py README.md README.html')
     try:
-        result = ''
+        document_lines = []
         with open(arguments[1], 'r') as markdown_file:
             markdown_lines = markdown_file.readlines()
             for markdown_line in markdown_lines:
-                result = result + (transform_hashtag(markdown_line))
-        with open('README.html', 'w') as html_file:
-            html_file.write(result)
+                process_markdown_line(markdown_line, document_lines)
+        with open(arguments[2], 'w') as html_file:
+            html_file.writelines(document_lines)
 
     except IOError:
         exit('Missing {}'.format(arguments[1]))
