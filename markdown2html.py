@@ -37,7 +37,6 @@ def from_markdown_to_html():
         with open(arguments[1]) as file:
             lines = file.readlines()
             for line in lines:
-                print(line)
                 result = result + (transform_hashtag(line))
             with open('README.html', 'w') as output_file:
                 output_file.write(result + '\n')
